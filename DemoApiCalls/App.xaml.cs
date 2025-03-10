@@ -14,6 +14,7 @@ namespace DemoApiCalls
     /// </summary>
     public partial class App : Application
     {
+        //  10. March 2025
         public App()
         {
             //KeepAwake.SetAlwaysAwake(true);
