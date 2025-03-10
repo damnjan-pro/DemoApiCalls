@@ -24,6 +24,7 @@ namespace DemoApiCalls.ViewModels
     {
         #region Properties
 
+
         private string _text = "API CALL RESULT";
         public string Text
         {
@@ -52,7 +53,7 @@ namespace DemoApiCalls.ViewModels
             }
         }
 
-        private string _urlString;
+        private string _urlString = "https://127.0.0.1";
         public string UrlString
         {
             get
@@ -92,6 +93,16 @@ namespace DemoApiCalls.ViewModels
                 return;
             }
 
+            if (string.IsNullOrEmpty(APICallsService.AuthToken))
+            {
+                APICallsService.AuthToken = await AuthenticateAndGetToken(UrlString, "asdf1234");
+                if (string.IsNullOrEmpty(APICallsService.AuthToken))
+                {
+                    MessageBox.Show("Authentication failed. Please check credentials.");
+                    return;
+                }
+            }
+
             string url = string.Empty;
 
 
@@ -109,7 +120,12 @@ namespace DemoApiCalls.ViewModels
 
                     //  HttpClient
                     var responseHttpClient = await APICallsService.GetAllInputsFromAPI(url);
-                    SetHttpClientResultToTextBox(await responseHttpClient.Content.ReadAsStringAsync());
+                    if (responseHttpClient?.Content == null)
+                    {
+                        Text += "No answer received from API.\n";
+                        break;
+                    }
+                    SetHttpClientResultToTextBox(await responseHttpClient?.Content?.ReadAsStringAsync());
                     break;
                 case ApiCallsEnum.GetSpecificInput:
                     Text = string.Empty;
@@ -413,7 +429,7 @@ namespace DemoApiCalls.ViewModels
 
         private void SetHttpClientResultToTextBox(string result)
         {
-            if (result == null)
+            if (string.IsNullOrEmpty(result))
             {
                 Text += "No answer received from API.\n";
                 return;
@@ -443,6 +459,34 @@ namespace DemoApiCalls.ViewModels
             }
         }
 
+        public static async Task<string> AuthenticateAndGetToken(string url, string password)
+        {
+            var client = new HttpClient();
+            var requestUrl = $"{url}/v1/auth";
+
+            var payload = new { pass = password };
+            var jsonPayload = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await client.PostAsync(requestUrl, content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Authentication failed: {response.StatusCode}");
+                    return null;
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var tokenResponse = JsonConvert.DeserializeObject<AuthResponse>(responseContent);
+                return tokenResponse?.Token;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during authentication: {ex.Message}");
+                return null;
+            }
+        }
         #endregion
     }
 }

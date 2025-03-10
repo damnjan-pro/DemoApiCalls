@@ -20,6 +20,7 @@ namespace DemoApiCalls.Services
         //private static readonly string baseURL = "https://127.0.0.1/v1/inputs";
         //private static readonly string baseURL = "https://localhost:44308/v1/inputs";
 
+        public static string AuthToken;
         #region Using HttpClient
         public static async Task<HttpResponseMessage> GetAllInputsFromAPI(string url)
         {
@@ -33,23 +34,24 @@ namespace DemoApiCalls.Services
             #endregion
 
 
-            var client = new HttpClient();
-            HttpResponseMessage response;
+            if (string.IsNullOrEmpty(AuthToken))
+            {
+                Console.WriteLine("Authentication required. Please log in.");
+                return null;
+            }
 
-            // Prepare request header
-            // No information on header?
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken);
+
             try
             {
-                //  HttpClient
-                response = await client.GetAsync(url);
+                return await client.GetAsync(url);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in API Call. Message: {ex.Message}");
                 return null;
             }
-
-            return response;
         }
         #endregion
 

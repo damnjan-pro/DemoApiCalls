@@ -129,6 +129,7 @@
       <DependentUpon>IButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\ApiCallsEnum.cs" />
+    <Compile Include="Models\AuthResponse.cs" />
     <Compile Include="Models\ColorsUpdateModel.cs" />
     <Compile Include="Services\APICallsService.cs" />
     <Compile Include="Utilities\KeepAwake.cs" />
