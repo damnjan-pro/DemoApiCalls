@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Security.Policy;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Windows;
+using System.Text.Json;
 
 namespace DemoApiCalls.Services
 {
@@ -296,5 +298,129 @@ namespace DemoApiCalls.Services
         }
 
 
+
+        public static async Task<IRestResponse<object>> TryRoutingAPI_1(string url)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
+
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, url);
+
+                // 🔥 Exact JSON as a raw string (Mimics Postman)
+                //string jsonBody1 = "{\r\n    \"id\": 0,\r\n    \"layout\": \"quad4\"\r\n}";
+                var requestBody = new APIRequestModel
+                {
+                    Id = 0,
+                    Layout = "quad4",
+                    Window1Src = 0,
+                    Window2Src = 1,
+                    Window3Src = 1,
+                    Window4Src = 0
+                };
+
+                // ✅ Serialize the object to JSON (camelCase by default)
+                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null, // Ensures the names stay exactly as defined
+                    WriteIndented = false // Minifies JSON for API compatibility
+                });
+
+                // ✅ Use `StringContent` with UTF-8 encoding
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                request.Content = content;
+
+                try
+                {
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode(); // Throws exception if not 2xx
+
+                        // ✅ Print response
+                        Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"Error in API Call: {ex.Message}");
+                }
+            }
+            ////////////////////////////////////////////////
+
+
+            IRestResponse<object> responseF=null;
+            return responseF;
+        }
+        public static async Task<IRestResponse<object>> TryRoutingAPI_2(string url)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
+
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, url);
+
+                var requestBody = new APIRequestModel
+                {
+                    Id = 0,
+                    Layout = "quad1",
+                    Window1Src = 1,
+                    Window2Src = 0,
+                    Window3Src = 0,
+                    Window4Src = 1
+                };
+
+                // ✅ Serialize the object to JSON (camelCase by default)
+                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null, // Ensures the names stay exactly as defined
+                    WriteIndented = false // Minifies JSON for API compatibility
+                });
+
+                // ✅ Use `StringContent` with UTF-8 encoding
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                request.Content = content;
+
+                try
+                {
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode(); // Throws exception if not 2xx
+
+                        // ✅ Print response
+                        Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"Error in API Call: {ex.Message}");
+                }
+            }
+
+
+
+
+
+
+
+
+            IRestResponse<object> responseF = null;
+            return responseF;
+        }
     }
 }

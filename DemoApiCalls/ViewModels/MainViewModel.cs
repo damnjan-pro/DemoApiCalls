@@ -53,7 +53,7 @@ namespace DemoApiCalls.ViewModels
             }
         }
 
-        private string _urlString = "https://127.0.0.1";
+        private string _urlString = "https://192.168.1.219";
         public string UrlString
         {
             get
@@ -93,15 +93,15 @@ namespace DemoApiCalls.ViewModels
                 return;
             }
 
-            if (string.IsNullOrEmpty(APICallsService.AuthToken))
-            {
-                APICallsService.AuthToken = await AuthenticateAndGetToken(UrlString, "asdf1234");
-                if (string.IsNullOrEmpty(APICallsService.AuthToken))
-                {
-                    MessageBox.Show("Authentication failed. Please check credentials.");
-                    return;
-                }
-            }
+            //if (string.IsNullOrEmpty(APICallsService.AuthToken))
+            //{
+            //    APICallsService.AuthToken = await AuthenticateAndGetToken(UrlString, "asdf1234");
+            //    if (string.IsNullOrEmpty(APICallsService.AuthToken))
+            //    {
+            //        MessageBox.Show("Authentication failed. Please check credentials.");
+            //        return;
+            //    }
+            //}
 
             string url = string.Empty;
 
@@ -113,26 +113,29 @@ namespace DemoApiCalls.ViewModels
                 case ApiCallsEnum.GetAllInputs:
                     Text = string.Empty;
                     Text += "Request for all inputs initiated.\n";
-                    url = $"{UrlString}/v1/inputs";
+                    url = $"{UrlString}/v1/outputs/0";
                     Text += $"URL: {url}\n";
                     //RestSharp
-                    //response = await APICallsService.GetAllInputsFromAPI(url);
+                    ////response = await APICallsService.GetAllInputsFromAPI(url);
 
-                    //  HttpClient
-                    var responseHttpClient = await APICallsService.GetAllInputsFromAPI(url);
-                    if (responseHttpClient?.Content == null)
-                    {
-                        Text += "No answer received from API.\n";
-                        break;
-                    }
-                    SetHttpClientResultToTextBox(await responseHttpClient?.Content?.ReadAsStringAsync());
+                    ////  HttpClient
+                    ////var responseHttpClient = await APICallsService.GetAllInputsFromAPI(url);
+                    ////if (responseHttpClient?.Content == null)
+                    //{
+                    //    Text += "No answer received from API.\n";
+                    //    break;
+                    //}
+                    //SetHttpClientResultToTextBox(await responseHttpClient?.Content?.ReadAsStringAsync());
+                    //break;
+                    response = await APICallsService.TryRoutingAPI_1(url);
+                    SetResultToTextBox(response);
                     break;
                 case ApiCallsEnum.GetSpecificInput:
                     Text = string.Empty;
                     Text += "Request for specific input initiated.\n";
-                    url = $"{UrlString}/v1/inputs/0";
+                    url = $"{UrlString}/v1/outputs/0";
                     Text += $"URL: {url}\n";
-                    response = await APICallsService.GetSpecificInputFromAPI(url);
+                    response = await APICallsService.TryRoutingAPI_2(url);
                     SetResultToTextBox(response);
                     break;
                 case ApiCallsEnum.GetInputsForSlot1:

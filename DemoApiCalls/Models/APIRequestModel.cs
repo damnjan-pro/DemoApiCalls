@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace DemoApiCalls.Models
+{
+    public class APIRequestModel
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("layout")]
+        public string Layout { get; set; }
+
+        [JsonPropertyName("window1-src")]
+        public int Window1Src { get; set; }
+
+        [JsonPropertyName("window2-src")]
+        public int Window2Src { get; set; }
+
+        [JsonPropertyName("window3-src")]
+        public int Window3Src { get; set; }
+
+        [JsonPropertyName("window4-src")]
+        public int Window4Src { get; set; }
+    }
+}
