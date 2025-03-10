@@ -141,24 +141,31 @@ namespace DemoApiCalls.ViewModels
                 case ApiCallsEnum.GetInputsForSlot1:
                     Text = string.Empty;
                     Text += "Request for input for slot 1 initiated.\n";
-                    url = $"{UrlString}/v1/inputs?slot-num=1";
+                    url = $"{UrlString}/v1/outputs/0";
                     Text += $"URL: {url}\n";
-                    response = await APICallsService.GetInputForSlot1FromAPI(url);
+                    response = await APICallsService.TryRoutingAPI_3(url);
                     SetResultToTextBox(response);
                     break;
 
                 //Set Colors API Calls
                 case ApiCallsEnum.SetColors:
                     Text = string.Empty;
-                    Text += "Request for colors setting initiated.\n";
-                    Text += "Sending:\n";
-                    Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
-                    url = $"{UrlString}/v1/inputs";
-                    //Text += $"URL: {url}\n";
-                    Text += $"ID Sending: {Id}\n";
-                    await SetColorsOnAPI(url, Id);
-                    //SetResultToTextBox(response);
+                    Text += "Request for input for slot 1 initiated.\n";
+                    url = $"{UrlString}/v1/outputs/0";
+                    Text += $"URL: {url}\n";
+                    response = await APICallsService.TryRoutingAPI_4(url);
+                    SetResultToTextBox(response);
                     break;
+                    //Text = string.Empty;
+                    //Text += "Request for colors setting initiated.\n";
+                    //Text += "Sending:\n";
+                    //Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
+                    //url = $"{UrlString}/v1/inputs";
+                    ////Text += $"URL: {url}\n";
+                    //Text += $"ID Sending: {Id}\n";
+                    //await SetColorsOnAPI(url, Id);
+                    ////SetResultToTextBox(response);
+                    //break;
                 case ApiCallsEnum.SetColors1:
                     Text = string.Empty;
                     Text += "Request for colors setting 1 initiated.\n";

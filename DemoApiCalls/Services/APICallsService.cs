@@ -422,5 +422,127 @@ namespace DemoApiCalls.Services
             IRestResponse<object> responseF = null;
             return responseF;
         }
+
+        public static async Task<IRestResponse<object>> TryRoutingAPI_3(string url)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
+
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, url);
+
+                var requestBody = new APIRequestModel
+                {
+                    Id = 0,
+                    Layout = "single",
+                    Window1Src = 1
+                };
+
+                // ✅ Serialize the object to JSON (camelCase by default)
+                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null, // Ensures the names stay exactly as defined
+                    WriteIndented = false // Minifies JSON for API compatibility
+                });
+
+                // ✅ Use `StringContent` with UTF-8 encoding
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                request.Content = content;
+
+                try
+                {
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode(); // Throws exception if not 2xx
+
+                        // ✅ Print response
+                        Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"Error in API Call: {ex.Message}");
+                }
+            }
+
+
+
+
+
+
+
+
+            IRestResponse<object> responseF = null;
+            return responseF;
+        }
+
+        public static async Task<IRestResponse<object>> TryRoutingAPI_4(string url)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
+
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, url);
+
+                var requestBody = new APIRequestModel
+                {
+                    Id = 0,
+                    Layout = "single",
+                    Window1Src = 0
+                };
+
+                // ✅ Serialize the object to JSON (camelCase by default)
+                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null, // Ensures the names stay exactly as defined
+                    WriteIndented = false // Minifies JSON for API compatibility
+                });
+
+                // ✅ Use `StringContent` with UTF-8 encoding
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                request.Content = content;
+
+                try
+                {
+                    using (var response = await client.SendAsync(request))
+                    {
+                        response.EnsureSuccessStatusCode(); // Throws exception if not 2xx
+
+                        // ✅ Print response
+                        Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"Error in API Call: {ex.Message}");
+                }
+            }
+
+
+
+
+
+
+
+
+            IRestResponse<object> responseF = null;
+            return responseF;
+        }
     }
 }
