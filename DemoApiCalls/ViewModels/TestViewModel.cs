@@ -130,7 +130,7 @@ namespace DemoApiCalls.ViewModels
                 {
                     1 => "single",
                     2 => "pip1",
-                    3 => "pbp",
+                    3 => "quad1",
                     4 => "quad1",
                     _ => "none" // This shouldn't happen, but just in case
                 };
@@ -138,12 +138,14 @@ namespace DemoApiCalls.ViewModels
                 {
                     Id = 0,
                     Layout = currentLayout, // Use cycling layout
-                    Window1Src = IsButton1On ? 1 : 0,
-                    Window2Src = IsButton2On ? 1 : 0,
-                    Window3Src = IsButton3On ? 1 : 0,
-                    Window4Src = IsButton4On ? 1 : 0
+                    Window1Src = IsButton1On ? 0 : 1,
+                    Window2Src = IsButton2On ? 0 : 1,
+                    Window3Src = IsButton3On ? 0 : 1,
+                    Window4Src = IsButton4On ? 0 : 1
                 };
             }
+
+            //  If all four are ON and user clicks on button 5, he should shift through quad's
 
             Text += $"Sending: Layout: {requestBody.Layout}.\n";
             //  Print in the TextBox
