@@ -14,10 +14,16 @@ namespace DemoApiCalls
     /// </summary>
     public partial class App : Application
     {
-        //  10. March 2025
+        private static AppDataContext _dataContext;
         public App()
         {
             //KeepAwake.SetAlwaysAwake(true);
+        }
+
+        public static AppDataContext DataContext
+        {
+            get => _dataContext ??= new AppDataContext();
+            private set => _dataContext = value;
         }
     }
 }

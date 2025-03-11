@@ -12,7 +12,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -87,106 +89,264 @@ namespace DemoApiCalls.ViewModels
 
         private async void PerformAPICall(object enumObject)
         {
+            var requestBody = new APIRequestModel();
+            string json = string.Empty;
+
             if (string.IsNullOrEmpty(UrlString))
             {
                 MessageBox.Show("Please enter URL");
                 return;
             }
 
-            //if (string.IsNullOrEmpty(APICallsService.AuthToken))
-            //{
-            //    APICallsService.AuthToken = await AuthenticateAndGetToken(UrlString, "asdf1234");
-            //    if (string.IsNullOrEmpty(APICallsService.AuthToken))
-            //    {
-            //        MessageBox.Show("Authentication failed. Please check credentials.");
-            //        return;
-            //    }
-            //}
-
             string url = string.Empty;
 
-
             var enumArrived = (ApiCallsEnum)enumObject;
-            IRestResponse<object> response = new RestResponse<object>();
+            HttpResponseMessage response = null;
             switch (enumArrived)
             {
-                case ApiCallsEnum.GetAllInputs:
+                case ApiCallsEnum.Task_5:
                     Text = string.Empty;
-                    Text += "Request for all inputs initiated.\n";
+                    Text += "Route input 1 to the window 1 of the output 1.\n";
                     url = $"{UrlString}/v1/outputs/0";
                     Text += $"URL: {url}\n";
-                    //RestSharp
-                    ////response = await APICallsService.GetAllInputsFromAPI(url);
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = "single",
+                        Window1Src = 0
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
 
-                    ////  HttpClient
-                    ////var responseHttpClient = await APICallsService.GetAllInputsFromAPI(url);
-                    ////if (responseHttpClient?.Content == null)
-                    //{
-                    //    Text += "No answer received from API.\n";
-                    //    break;
-                    //}
-                    //SetHttpClientResultToTextBox(await responseHttpClient?.Content?.ReadAsStringAsync());
-                    //break;
-                    response = await APICallsService.TryRoutingAPI_1(url);
-                    SetResultToTextBox(response);
-                    break;
-                case ApiCallsEnum.GetSpecificInput:
-                    Text = string.Empty;
-                    Text += "Request for specific input initiated.\n";
-                    url = $"{UrlString}/v1/outputs/0";
-                    Text += $"URL: {url}\n";
-                    response = await APICallsService.TryRoutingAPI_2(url);
-                    SetResultToTextBox(response);
-                    break;
-                case ApiCallsEnum.GetInputsForSlot1:
-                    Text = string.Empty;
-                    Text += "Request for input for slot 1 initiated.\n";
-                    url = $"{UrlString}/v1/outputs/0";
-                    Text += $"URL: {url}\n";
-                    response = await APICallsService.TryRoutingAPI_3(url);
-                    SetResultToTextBox(response);
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
                     break;
 
-                //Set Colors API Calls
-                case ApiCallsEnum.SetColors:
+                case ApiCallsEnum.Task_6:
                     Text = string.Empty;
-                    Text += "Request for input for slot 1 initiated.\n";
+                    Text += "Route input 1,2 to the window 1 and window 2 of the output 1.\n";
                     url = $"{UrlString}/v1/outputs/0";
                     Text += $"URL: {url}\n";
-                    response = await APICallsService.TryRoutingAPI_4(url);
-                    SetResultToTextBox(response);
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = "pip",
+                        Window1Src = 0,
+                        Window2Src = 1
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
+
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
                     break;
-                    //Text = string.Empty;
-                    //Text += "Request for colors setting initiated.\n";
-                    //Text += "Sending:\n";
-                    //Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
-                    //url = $"{UrlString}/v1/inputs";
-                    ////Text += $"URL: {url}\n";
-                    //Text += $"ID Sending: {Id}\n";
-                    //await SetColorsOnAPI(url, Id);
-                    ////SetResultToTextBox(response);
-                    //break;
-                case ApiCallsEnum.SetColors1:
+                case ApiCallsEnum.Task_7:
                     Text = string.Empty;
-                    Text += "Request for colors setting 1 initiated.\n";
-                    Text += "Sending:\n";
-                    Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
-                    url = $"{UrlString}";
-                    Text += $"ID Sending: {Id}\n";
-                    await SetColorsOnAPI1(url, Id);
-                    //SetHttpClientResultToTextBox(await response1.Content.ReadAsStringAsync());
+                    Text += "Route input 1,2 to the window 1 and window 2 of the output 1.\n";
+                    url = $"{UrlString}/v1/outputs/0";
+                    Text += $"URL: {url}\n";
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = "pbp",
+                        Window1Src = 0,
+                        Window2Src = 1
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
+
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
                     break;
-                case ApiCallsEnum.SetColors2:
+                case ApiCallsEnum.Task_8:
                     Text = string.Empty;
-                    Text += "Request for colors setting 2 initiated.\n";
-                    Text += "Sending:\n";
-                    Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
-                    url = $"{UrlString}/v1/inputs";
-                    //Text += $"URL: {url}\n";
-                    Text += $"ID Sending: {Id}\n";
-                    await SetColorsOnAPI2(url, Id);
-                    //SetHttpClientResultToTextBox(await response2.Content.ReadAsStringAsync());
+                    Text += "Route input 1,2,3,4 to the window 1,2,3,4 of the output 1.\n";
+                    url = $"{UrlString}/v1/outputs/0";
+                    Text += $"URL: {url}\n";
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = "quad",
+                        Window1Src = 0,
+                        Window2Src = 1,
+                        Window3Src = 2,
+                        Window4Src = 3,
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
+
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
                     break;
+
+                case ApiCallsEnum.ChangeLayout:
+                    Text = string.Empty;
+                    Text += "Change Layout.\n";
+                    url = $"{UrlString}/v1/outputs/0";
+                    Text += $"URL: {url}\n";
+
+                    App.DataContext.CurrentLayout = GetNextLayout(App.DataContext.CurrentLayout);
+
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = App.DataContext.CurrentLayout.ToString(),
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
+
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
+                    break;
+                case ApiCallsEnum.ChangeLayoutPlus:
+                    Text = string.Empty;
+                    Text += "Change Layout.\n";
+                    url = $"{UrlString}/v1/outputs/0";
+                    Text += $"URL: {url}\n";
+
+                    App.DataContext.CurrentLayout = await GetCurrentLayoutFromAPI(url);
+
+                    App.DataContext.CurrentLayout = GetNextLayout(App.DataContext.CurrentLayout);
+
+                    requestBody = new APIRequestModel
+                    {
+                        Id = 0,
+                        Layout = App.DataContext.CurrentLayout.ToString(),
+                    };
+                    //  Print in the TextBox
+                    json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
+                    Text += $"Sending to API: {json}\n";
+
+                    response = await APICallsService.Post_Payload_To_API(url, requestBody);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseBody = await response.Content.ReadAsStringAsync();
+                        SetHttpClientResultToTextBox(responseBody);
+                    }
+                    else
+                    {
+                        string errorContent = await response.Content.ReadAsStringAsync();
+                        Text += $"API Error: {errorContent}";
+                    }
+                    break;
+
+
+                ////OLD
+                //case ApiCallsEnum.GetAllInputs:
+                //    Text = string.Empty;
+                //    Text += "Request for all inputs initiated.\n";
+                //    url = $"{UrlString}/v1/outputs/0";
+                //    Text += $"URL: {url}\n";
+                //    response = await APICallsService.TryRoutingAPI_1(url);
+                //    SetResultToTextBox(response);
+                //    break;
+                //case ApiCallsEnum.GetSpecificInput:
+                //    Text = string.Empty;
+                //    Text += "Request for specific input initiated.\n";
+                //    url = $"{UrlString}/v1/outputs/0";
+                //    Text += $"URL: {url}\n";
+                //    response = await APICallsService.TryRoutingAPI_2(url);
+                //    SetResultToTextBox(response);
+                //    break;
+                //case ApiCallsEnum.GetInputsForSlot1:
+                //    Text = string.Empty;
+                //    Text += "Request for input for slot 1 initiated.\n";
+                //    url = $"{UrlString}/v1/outputs/0";
+                //    Text += $"URL: {url}\n";
+                //    response = await APICallsService.TryRoutingAPI_3(url);
+                //    SetResultToTextBox(response);
+                //    break;
+
+                ////Set Colors API Calls
+                //case ApiCallsEnum.SetColors:
+                //    Text = string.Empty;
+                //    Text += "Request for input for slot 1 initiated.\n";
+                //    url = $"{UrlString}/v1/outputs/0";
+                //    Text += $"URL: {url}\n";
+                //    response = await APICallsService.TryRoutingAPI_4(url);
+                //    SetResultToTextBox(response);
+                //    break;
+                //    //Text = string.Empty;
+                //    //Text += "Request for colors setting initiated.\n";
+                //    //Text += "Sending:\n";
+                //    //Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
+                //    //url = $"{UrlString}/v1/inputs";
+                //    ////Text += $"URL: {url}\n";
+                //    //Text += $"ID Sending: {Id}\n";
+                //    //await SetColorsOnAPI(url, Id);
+                //    ////SetResultToTextBox(response);
+                //    //break;
+                //case ApiCallsEnum.SetColors1:
+                //    Text = string.Empty;
+                //    Text += "Request for colors setting 1 initiated.\n";
+                //    Text += "Sending:\n";
+                //    Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
+                //    url = $"{UrlString}";
+                //    Text += $"ID Sending: {Id}\n";
+                //    await SetColorsOnAPI1(url, Id);
+                //    //SetHttpClientResultToTextBox(await response1.Content.ReadAsStringAsync());
+                //    break;
+                //case ApiCallsEnum.SetColors2:
+                //    Text = string.Empty;
+                //    Text += "Request for colors setting 2 initiated.\n";
+                //    Text += "Sending:\n";
+                //    Text += $"{APICallsService.PrepareJsonForPost(Id)}.\n\n";
+                //    url = $"{UrlString}/v1/inputs";
+                //    //Text += $"URL: {url}\n";
+                //    Text += $"ID Sending: {Id}\n";
+                //    await SetColorsOnAPI2(url, Id);
+                //    //SetHttpClientResultToTextBox(await response2.Content.ReadAsStringAsync());
+                //    break;
                 default:
                     break;
             }
@@ -198,6 +358,55 @@ namespace DemoApiCalls.ViewModels
 
         }
 
+        private async Task<Layouts> GetCurrentLayoutFromAPI(string url)
+        {
+            Text = string.Empty;
+            Text += "GetCurrentLayoutFromAPI.\n";
+            url = $"{UrlString}/v1/outputs/0";
+            Text += $"URL: {url}\n";
+
+            HttpResponseMessage response = await APICallsService.Get_Response_From_API("https://example.com/api");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
+                {
+                    if (doc.RootElement.TryGetProperty("layout", out JsonElement layoutElement))
+                    {
+                        string layoutString = layoutElement.GetString();
+                        if (Enum.TryParse(layoutString, true, out Layouts layoutEnum)) // ✅ Case-insensitive conversion
+                        {
+                            Text += $"Extracted Layout: {layoutEnum})\n";
+                            return layoutEnum;
+
+                        }
+                        else
+                        {
+                            Text += $"\"Invalid layout value received from API\n";
+                        }
+                    }
+                    else
+                    {
+                        Text += $"Layout property not found in API response.\n";
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine($"API Call Failed: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+            return Layouts.single;
+        }
+
+        private Layouts GetNextLayout(Layouts current)
+        {
+            Layouts[] values = (Layouts[])Enum.GetValues(typeof(Layouts));
+            int currentIndex = Array.IndexOf(values, current);
+            int nextIndex = (currentIndex + 1) % values.Length;
+            return values[nextIndex];
+        }
         public async Task SetColorsOnAPI(string url, int Id)
         {
             #region SSL Addendum

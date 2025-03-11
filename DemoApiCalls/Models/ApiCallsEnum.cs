@@ -11,6 +11,11 @@ namespace DemoApiCalls.Models
         GetAllInputs, 
         GetSpecificInput, 
         GetInputsForSlot1, 
-        SetColors, SetColors1, SetColors2
+        SetColors, SetColors1, SetColors2, 
+        
+        //  11.03
+        Task_5, Task_6, Task_7, Task_8,
+
+        ChangeLayout, ChangeLayoutPlus,
     }
 }

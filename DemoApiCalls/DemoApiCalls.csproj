@@ -122,6 +122,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppDataContext.cs" />
     <Compile Include="Converters\NullImageConverter.cs" />
     <Compile Include="CustomControls\CustomButton.xaml.cs">
       <DependentUpon>CustomButton.xaml</DependentUpon>
@@ -133,6 +134,7 @@
     <Compile Include="Models\APIRequestModel.cs" />
     <Compile Include="Models\AuthResponse.cs" />
     <Compile Include="Models\ColorsUpdateModel.cs" />
+    <Compile Include="Models\Layouts.cs" />
     <Compile Include="Services\APICallsService.cs" />
     <Compile Include="Utilities\KeepAwake.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

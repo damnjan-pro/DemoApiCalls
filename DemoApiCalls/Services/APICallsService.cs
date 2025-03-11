@@ -297,7 +297,99 @@ namespace DemoApiCalls.Services
             return response;
         }
 
+        public static async Task<HttpResponseMessage> Post_Payload_To_API(string url, APIRequestModel requestBody)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
 
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, url);
+
+                // ✅ Serialize the object to JSON (camelCase by default)
+                string jsonBody = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = null, // Ensures the names stay exactly as defined
+                    WriteIndented = false // Minifies JSON for API compatibility
+                });
+
+                // ✅ Use `StringContent` with UTF-8 encoding
+                var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+
+                request.Content = content;
+
+                try
+                {
+                    return await client.SendAsync(request);
+                }
+                catch (HttpRequestException ex)
+                {
+                    string innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : "None";
+
+                    var errorJson = $@"
+                                {{
+                                    ""error"": ""{ex.Message}"",
+                                    ""innerError"": ""{innerExceptionMessage}""
+                                }}";
+
+                    var errorResponse = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ReasonPhrase = "API Request Failed",
+                        Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+                    };
+
+                    return errorResponse;
+                }
+            }
+        }
+
+        public static async Task<HttpResponseMessage> Get_Response_From_API(string url)
+        {
+            #region SSL Addendum
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.ServerCertificateValidationCallback =
+                delegate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+                {
+                    return true;
+                };
+            #endregion
+
+            using (var client = new HttpClient())
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+                try
+                {
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    response.EnsureSuccessStatusCode(); // Throws exception if not 2xx
+                    return response; // ✅ Return the full HttpResponseMessage
+                }
+                catch (HttpRequestException ex)
+                {
+                    string innerExceptionMessage = ex.InnerException != null ? ex.InnerException.Message : "None";
+
+                    var errorJson = $@"
+                                {{
+                                    ""error"": ""{ex.Message}"",
+                                    ""innerError"": ""{innerExceptionMessage}""
+                                }}";
+
+                    var errorResponse = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+                    {
+                        ReasonPhrase = "API Request Failed",
+                        Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+                    };
+
+                    return errorResponse;
+                }
+            }
+        }
 
         public static async Task<IRestResponse<object>> TryRoutingAPI_1(string url)
         {
@@ -422,7 +514,6 @@ namespace DemoApiCalls.Services
             IRestResponse<object> responseF = null;
             return responseF;
         }
-
         public static async Task<IRestResponse<object>> TryRoutingAPI_3(string url)
         {
             #region SSL Addendum
@@ -483,7 +574,6 @@ namespace DemoApiCalls.Services
             IRestResponse<object> responseF = null;
             return responseF;
         }
-
         public static async Task<IRestResponse<object>> TryRoutingAPI_4(string url)
         {
             #region SSL Addendum
