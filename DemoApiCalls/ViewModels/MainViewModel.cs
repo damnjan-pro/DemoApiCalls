@@ -1,6 +1,7 @@
 ﻿using DemoApiCalls.Models;
 using DemoApiCalls.Services;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Prism.Commands;
 using RestSharp;
 using System;
@@ -231,6 +232,10 @@ namespace DemoApiCalls.ViewModels
                     {
                         Id = 0,
                         Layout = App.DataContext.CurrentLayout.ToString(),
+                        Window1Src = 0,
+                        Window2Src = 1,
+                        Window3Src = 0,
+                        Window4Src = 1
                     };
                     //  Print in the TextBox
                     json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
@@ -262,14 +267,19 @@ namespace DemoApiCalls.ViewModels
                     {
                         Id = 0,
                         Layout = App.DataContext.CurrentLayout.ToString(),
+                        Window1Src = 0,
+                        Window2Src = 1,
+                        Window3Src = 0,
+                        Window4Src = 1
                     };
                     //  Print in the TextBox
                     json = System.Text.Json.JsonSerializer.Serialize(requestBody, new JsonSerializerOptions { WriteIndented = true });
-                    Text += $"Sending to API: {json}\n";
+                    Text += $"Layout Sending to API: {App.DataContext.CurrentLayout}\n";
 
                     response = await APICallsService.Post_Payload_To_API(url, requestBody);
                     if (response.IsSuccessStatusCode)
                     {
+                        Text += $"New layout: {App.DataContext.CurrentLayout}\n";
                         string responseBody = await response.Content.ReadAsStringAsync();
                         SetHttpClientResultToTextBox(responseBody);
                     }
@@ -365,7 +375,7 @@ namespace DemoApiCalls.ViewModels
             url = $"{UrlString}/v1/outputs/0";
             Text += $"URL: {url}\n";
 
-            HttpResponseMessage response = await APICallsService.Get_Response_From_API("https://example.com/api");
+            HttpResponseMessage response = await APICallsService.Get_Response_From_API(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -378,7 +388,7 @@ namespace DemoApiCalls.ViewModels
                         string layoutString = layoutElement.GetString();
                         if (Enum.TryParse(layoutString, true, out Layouts layoutEnum)) // ✅ Case-insensitive conversion
                         {
-                            Text += $"Extracted Layout: {layoutEnum})\n";
+                            Text += $"Former Layout: {layoutEnum}\n";
                             return layoutEnum;
 
                         }
@@ -623,7 +633,7 @@ namespace DemoApiCalls.ViewModels
             }
             if (result != null && result.Content != null)
             {
-                Text += "Answer received from API; ";
+                //Text += "Answer received from API; ";
 
                 if (result.StatusCode == System.Net.HttpStatusCode.OK) 
                 {
@@ -655,7 +665,7 @@ namespace DemoApiCalls.ViewModels
             }
             if (!string.IsNullOrEmpty(result))
             {
-                Text += "Answer received from API; ";
+                //Text += "Answer received from API; ";
 
                 if (!string.IsNullOrEmpty(result))
                 {

@@ -123,6 +123,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppDataContext.cs" />
+    <Compile Include="Converters\BoolToOnOffConverter.cs" />
     <Compile Include="Converters\NullImageConverter.cs" />
     <Compile Include="CustomControls\CustomButton.xaml.cs">
       <DependentUpon>CustomButton.xaml</DependentUpon>
@@ -130,19 +131,28 @@
     <Compile Include="CustomControls\IButton.xaml.cs">
       <DependentUpon>IButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomControls\TestPage.xaml.cs">
+      <DependentUpon>TestPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\ApiCallsEnum.cs" />
     <Compile Include="Models\APIRequestModel.cs" />
     <Compile Include="Models\AuthResponse.cs" />
     <Compile Include="Models\ColorsUpdateModel.cs" />
     <Compile Include="Models\Layouts.cs" />
     <Compile Include="Services\APICallsService.cs" />
+    <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\KeepAwake.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\TestViewModel.cs" />
     <Page Include="CustomControls\CustomButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CustomControls\IButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomControls\TestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
